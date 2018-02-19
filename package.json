@@ -1,13 +1,13 @@
 {
-  "name": "base",
+  "name": "calc-diff",
   "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
   "bin": {
-    "game": "dist/bin/gendiff.js"
+    "gendiff": "dist/bin/gendiff.js"
   },
   "engines": {
-    "node": "8"
+    "node": "9"
   },
   "files": [
     "dist"
@@ -24,15 +24,15 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/Yorickov/project-lvl2-s193.git"
   },
   "bugs": {
-    "url": ""
+    "url": "https://github.com/Yorickov/project-lvl2-s193/issues"
   },
   "keywords": [],
   "author": "Yorickov",
   "license": "ISC",
-  "homepage": "#readme",
+  "homepage": "https://github.com/Yorickov/project-lvl2-s193#readme",
   "devDependencies": {
     "babel-cli": "*",
     "babel-core": "*",
