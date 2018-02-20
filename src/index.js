@@ -43,8 +43,8 @@ const parse = (firstOb, secondOb) => {
 const getStr = (path, options) => fs.readFileSync(path, options);
 
 export default (pathToFile1, pathToFile2) => {
-  const firstStr = getStr(pathToFile1);
-  const secondStr = getStr(pathToFile2);
+  const firstStr = getStr(pathToFile1, 'utf8');
+  const secondStr = getStr(pathToFile2, 'utf8');
 
   const firstOb = parser(pathToFile1)(firstStr);
   const secondOb = parser(pathToFile2)(secondStr);
