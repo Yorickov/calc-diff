@@ -1,7 +1,10 @@
 import _ from 'lodash';
 import fs from 'fs';
 
-const propertyActions = [
+import parser from './parser';
+import render from './render';
+
+const typeAstBuilders = [
   {
     type: 'unchanged',
     check: (firstOb, secondOb, key) =>
@@ -12,7 +15,7 @@ const propertyActions = [
     type: 'changed',
     check: (firstOb, secondOb, key) =>
       (_.has(firstOb, key) && _.has(secondOb, key) && (firstOb[key] !== secondOb[key])),
-    process: (firstKey, secondKey) => [firstKey, secondKey],
+    process: (firstKey, secondKey) => ({ first: firstKey, second: secondKey }),
   },
   {
     type: 'added',
@@ -26,30 +29,25 @@ const propertyActions = [
   },
 ];
 
-const mapping = {
-  unchanged: (key, value) => `   ${key}: ${value}\n`,
-  changed: (key, value) => ` + ${key}: ${value[1]}\n - ${key}: ${value[0]}\n`,
-  added: (key, value) => ` + ${key}: ${value}\n`,
-  deleted: (key, value) => ` - ${key}: ${value}\n`,
-};
+const parse = (firstOb, secondOb) => {
+  const keys = _.union(Object.keys(firstOb), Object.keys(secondOb));
 
-const parse = (firstOb, secondOb) =>
-  Object.keys({ ...firstOb, ...secondOb }).map((key) => {
-    const { type, process } = propertyActions.find(({ check }) =>
+  return keys.map((key) => {
+    const { type, process } = typeAstBuilders.find(({ check }) =>
       check(firstOb, secondOb, key));
     const value = process(firstOb[key], secondOb[key]);
     return { type, key, value };
   });
-
-const render = (ast) => {
-  const result = ast.map(({ type, key, value }) =>
-    mapping[type](key, value)).join('');
-  return `{\n${result}}`;
 };
 
+const getStr = (path, options) => fs.readFileSync(path, options);
+
 export default (pathToFile1, pathToFile2) => {
-  const firstOb = JSON.parse(fs.readFileSync(pathToFile1));
-  const secondOb = JSON.parse(fs.readFileSync(pathToFile2));
+  const firstStr = getStr(pathToFile1);
+  const secondStr = getStr(pathToFile2);
+
+  const firstOb = parser(pathToFile1)(firstStr);
+  const secondOb = parser(pathToFile2)(secondStr);
   const ast = parse(firstOb, secondOb);
   return render(ast);
 };
