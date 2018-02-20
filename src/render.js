@@ -9,4 +9,4 @@ export default (ast) => {
   const result = ast.map(({ type, key, value }) =>
     typeRender[type](key, value)).join('');
   return `{\n${result}}`;
-}
+};
