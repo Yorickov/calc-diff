@@ -15,7 +15,7 @@ test:
 	npm test
 
 lint:
-	npm run eslint ./src
+	npm run eslint .
 
 clean:
 	rm -rf dist
