@@ -6,7 +6,10 @@ build:
 	npm run build
 
 start:
-	npm run babel-node -- src/bin/gendiff.js -h
+	npm run babel-node -- src/bin/gendiff.js
+
+index:
+	npm run babel-node -- src/index.js
 
 test:
 	npm test
