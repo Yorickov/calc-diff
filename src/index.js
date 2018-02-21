@@ -1,53 +1,69 @@
 import _ from 'lodash';
-import fs from 'fs';
+import path from 'path';
 
-import parser from './parser';
-import render from './render';
+import getParser from './parsers';
+import renderNested from './render-nested';
+import { isObject, getStr } from './utils';
 
 const typeAstBuilders = [
+  {
+    type: 'parent',
+    check: (firstOb, secondOb, key) =>
+      isObject(firstOb[key]) && isObject(secondOb[key]),
+    process: (firstValue, secondValue, fn) => ({ children: fn(firstValue, secondValue) }),
+  },
   {
     type: 'unchanged',
     check: (firstOb, secondOb, key) =>
       _.has(firstOb, key) && _.has(secondOb, key) && (firstOb[key] === secondOb[key]),
-    process: firstKey => firstKey,
+    process: firstValue => ({ firstValue }),
   },
   {
     type: 'changed',
     check: (firstOb, secondOb, key) =>
       (_.has(firstOb, key) && _.has(secondOb, key) && (firstOb[key] !== secondOb[key])),
-    process: (firstKey, secondKey) => ({ first: firstKey, second: secondKey }),
+    process: (firstValue, secondValue) => ({ firstValue, secondValue }),
   },
   {
     type: 'added',
-    check: (firstOb, secondOb, key) => !_.has(firstOb, key) && _.has(secondOb, key),
-    process: (firstKey, secondKey) => secondKey,
+    check: (firstOb, secondOb, key) =>
+      !_.has(firstOb, key) && _.has(secondOb, key),
+    process: (firstValue, secondValue) => ({ secondValue }),
   },
   {
     type: 'deleted',
-    check: (firstOb, secondOb, key) => _.has(firstOb, key) && !_.has(secondOb, key),
-    process: firstKey => firstKey,
+    check: (firstOb, secondOb, key) =>
+      _.has(firstOb, key) && !_.has(secondOb, key),
+    process: firstValue => ({ firstValue }),
   },
 ];
 
-const parse = (firstOb, secondOb) => {
+const getType = pathToFile => path.extname(pathToFile);
+
+const parseToObj = (str, type) => getParser(type)(str);
+
+const parseToAst = (firstOb, secondOb) => {
   const keys = _.union(Object.keys(firstOb), Object.keys(secondOb));
 
   return keys.map((key) => {
     const { type, process } = typeAstBuilders.find(({ check }) =>
       check(firstOb, secondOb, key));
-    const value = process(firstOb[key], secondOb[key]);
-    return { type, key, value };
+
+    const value = process(firstOb[key], secondOb[key], parseToAst);
+    return { type, key, ...value };
   });
 };
-
-const getStr = (path, options) => fs.readFileSync(path, options);
 
 export default (pathToFile1, pathToFile2) => {
   const firstStr = getStr(pathToFile1, 'utf8');
   const secondStr = getStr(pathToFile2, 'utf8');
 
-  const firstOb = parser(pathToFile1)(firstStr);
-  const secondOb = parser(pathToFile2)(secondStr);
-  const ast = parse(firstOb, secondOb);
-  return render(ast);
+  const firstType = getType(pathToFile1);
+  const secondType = getType(pathToFile2);
+
+  const firstOb = parseToObj(firstStr, firstType);
+  const secondOb = parseToObj(secondStr, secondType);
+
+  const ast = parseToAst(firstOb, secondOb);
+  return renderNested(ast);
 };
