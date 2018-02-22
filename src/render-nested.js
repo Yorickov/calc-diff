@@ -1,16 +1,16 @@
-import { isObject } from './utils';
+import isTrueObject from './utils';
 
 export default (ast) => {
   const render = (tree, spaceCount) => {
     const beforeKey = ' '.repeat(spaceCount);
 
     const getValue = (value) => {
-      if (!isObject(value)) {
+      if (!isTrueObject(value)) {
         return `${value}`;
       }
       const getStr = obj =>
         Object.keys(obj).map(key =>
-          (isObject(obj[key]) ? getStr(obj[key]) : `${key}: ${obj[key]}`))
+          (isTrueObject(obj[key]) ? getStr(obj[key]) : `${key}: ${obj[key]}`))
           .join(`\n${' '.repeat(beforeKey + 6)}`);
 
       const str = `${' '.repeat(spaceCount + 6)}${getStr(value)}\n${' '.repeat(spaceCount + 2)}`;

@@ -1,15 +1,17 @@
 import _ from 'lodash';
 import path from 'path';
+import fs from 'fs';
+import yaml from 'js-yaml';
+import ini from 'ini';
 
-import getParser from './parsers';
 import renderNested from './render-nested';
-import { isObject, getStr } from './utils';
+import isTrueObject from './utils';
 
 const typeAstBuilders = [
   {
     type: 'parent',
     check: (firstOb, secondOb, key) =>
-      isObject(firstOb[key]) && isObject(secondOb[key]),
+      isTrueObject(firstOb[key]) && isTrueObject(secondOb[key]),
     process: (firstValue, secondValue, fn) => ({ children: fn(firstValue, secondValue) }),
   },
   {
@@ -38,9 +40,17 @@ const typeAstBuilders = [
   },
 ];
 
-const getType = pathToFile => path.extname(pathToFile);
+const parsers = {
+  '.json': JSON.parse,
+  '.yml': yaml.safeLoad,
+  '.ini': ini.parse,
+};
 
-const parseToObj = (str, type) => getParser(type)(str);
+const getTypeFile = pathToFile => path.extname(pathToFile);
+
+const getParser = typeFile => parsers[typeFile];
+
+const parseToObj = (str, typeFile) => getParser(typeFile)(str);
 
 const parseToAst = (firstOb, secondOb) => {
   const keys = _.union(Object.keys(firstOb), Object.keys(secondOb));
@@ -55,11 +65,11 @@ const parseToAst = (firstOb, secondOb) => {
 };
 
 export default (pathToFile1, pathToFile2) => {
-  const firstStr = getStr(pathToFile1, 'utf8');
-  const secondStr = getStr(pathToFile2, 'utf8');
+  const firstStr = fs.readFileSync(pathToFile1, 'utf8');
+  const secondStr = fs.readFileSync(pathToFile2, 'utf8');
 
-  const firstType = getType(pathToFile1);
-  const secondType = getType(pathToFile2);
+  const firstType = getTypeFile(pathToFile1);
+  const secondType = getTypeFile(pathToFile2);
 
   const firstOb = parseToObj(firstStr, firstType);
   const secondOb = parseToObj(secondStr, secondType);
