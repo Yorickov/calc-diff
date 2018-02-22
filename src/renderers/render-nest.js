@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import isTrueObject from './utils';
+import isTrueObject from '../utils';
 
 export default (ast) => {
   const render = (tree, spaceCount) => {
@@ -14,8 +14,8 @@ export default (ast) => {
           (isTrueObject(obj[key]) ? getStr(obj[key]) : `${key}: ${obj[key]}`))
           .join(`\n${' '.repeat(beforeKey + 6)}`);
 
-      const str = `${' '.repeat(spaceCount + 6)}${getStr(value)}\n${' '.repeat(spaceCount + 2)}`;
-      return `{\n${str}}`;
+      const newValue = `${' '.repeat(spaceCount + 6)}${getStr(value)}\n${' '.repeat(spaceCount + 2)}`;
+      return `{\n${newValue}}`;
     };
 
     const typeRender = {
@@ -41,6 +41,6 @@ export default (ast) => {
     return _.flatten(result).join('\n');
   };
 
-  const str = render(ast, 2);
-  return `{\n${str}\n}`;
+  const strResult = render(ast, 2);
+  return `{\n${strResult}\n}`;
 };

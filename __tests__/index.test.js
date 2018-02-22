@@ -22,43 +22,64 @@ const inilNestPathFirst = '__tests__/__fixtures__/before-nest.yml';
 const inilNestPathSecond = '__tests__/__fixtures__/after-nest.yml';
 
 const diffNestPath = '__tests__/__fixtures__/diff-nest.txt';
+const diffPlainPath = '__tests__/__fixtures__/diff-plain.txt';
 
-describe('flar tests', () => {
+describe('flat structure - nested-render', () => {
   it('json', () => {
-    const received = genDiff(jsonPathFirst, jsonPathSecond);
+    const received = genDiff(jsonPathFirst, jsonPathSecond, 'nest');
     const expected = fs.readFileSync(diffPath, 'utf8');
-    expect(received).toEqual(expected);
+    expect(received).toMatch(expected);
   });
 
   it('yaml', () => {
-    const received = genDiff(yamlPathFirst, yamlPathSecond);
+    const received = genDiff(yamlPathFirst, yamlPathSecond, 'nest');
     const expected = fs.readFileSync(diffPath, 'utf8');
-    expect(received).toEqual(expected);
+    expect(received).toMatch(expected);
   });
 
   it('ini', () => {
-    const received = genDiff(iniPathFirst, iniPathSecond);
+    const received = genDiff(iniPathFirst, iniPathSecond, 'nest');
     const expected = fs.readFileSync(diffPath, 'utf8');
-    expect(received).toEqual(expected);
+    expect(received).toMatch(expected);
   });
 });
 
-describe('nested tests', () => {
+describe('tree structure - nested-render', () => {
   it('json', () => {
-    const received = genDiff(jsonNestPathFirst, jsonNestPathSecond);
+    const received = genDiff(jsonNestPathFirst, jsonNestPathSecond, 'nest');
     const expected = fs.readFileSync(diffNestPath, 'utf8');
-    expect(received).toEqual(expected);
+    expect(received).toMatch(expected);
   });
 
   it('yaml', () => {
-    const received = genDiff(yamlNestPathFirst, yamlNestPathSecond);
+    const received = genDiff(yamlNestPathFirst, yamlNestPathSecond, 'nest');
     const expected = fs.readFileSync(diffNestPath, 'utf8');
-    expect(received).toEqual(expected);
+    expect(received).toMatch(expected);
   });
 
   it('ini', () => {
-    const received = genDiff(inilNestPathFirst, inilNestPathSecond);
+    const received = genDiff(inilNestPathFirst, inilNestPathSecond, 'nest');
     const expected = fs.readFileSync(diffNestPath, 'utf8');
-    expect(received).toEqual(expected);
+    expect(received).toMatch(expected);
+  });
+});
+
+describe('tree structure - plain-render', () => {
+  it('json', () => {
+    const received = genDiff(jsonNestPathFirst, jsonNestPathSecond, 'plain');
+    const expected = fs.readFileSync(diffPlainPath, 'utf8');
+    expect(received).toMatch(expected);
+  });
+
+  it('yaml', () => {
+    const received = genDiff(yamlNestPathFirst, yamlNestPathSecond, 'plain');
+    const expected = fs.readFileSync(diffPlainPath, 'utf8');
+    expect(received).toMatch(expected);
+  });
+
+  it('ini', () => {
+    const received = genDiff(inilNestPathFirst, inilNestPathSecond, 'plain');
+    const expected = fs.readFileSync(diffPlainPath, 'utf8');
+    expect(received).toMatch(expected);
   });
 });

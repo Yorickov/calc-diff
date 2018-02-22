@@ -5,8 +5,11 @@ build:
 	rm -rf dist
 	npm run build
 
-start:
-	npm run babel-node -- src/bin/gendiff.js __tests__/__fixtures__/before.ini __tests__/__fixtures__/after.ini
+plain:
+	npm run babel-node -- src/bin/gendiff.js --format plain __tests__/__fixtures__/before-nest.json __tests__/__fixtures__/after-nest.json
+
+nest:
+	npm run babel-node -- src/bin/gendiff.js --format nest __tests__/__fixtures__/before-nest.json __tests__/__fixtures__/after-nest.json
 
 index:
 	npm run babel-node -- src/index.js
