@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import isTrueObject from './utils';
 
 export default (ast) => {
@@ -23,20 +24,21 @@ export default (ast) => {
       unchanged: (key, firstValue) =>
         `${beforeKey}  ${key}: ${getValue(firstValue)}`,
       changed: (key, firstValue, secondValue) =>
-        `${beforeKey}+ ${key}: ${getValue(secondValue)}\n${beforeKey}- ${key}: ${getValue(firstValue)}`,
+        [`${beforeKey}+ ${key}: ${getValue(secondValue)}`, `${beforeKey}- ${key}: ${getValue(firstValue)}`],
       added: (key, firstValue, secondValue) =>
         `${beforeKey}+ ${key}: ${getValue(secondValue)}`,
       deleted: (key, firstValue) =>
         `${beforeKey}- ${key}: ${getValue(firstValue)}`,
     };
 
-    return tree.map(({
+    const result = tree.map(({
       type,
       key,
       firstValue,
       secondValue,
       children,
-    }) => typeRender[type](key, firstValue, secondValue, children)).join('\n');
+    }) => typeRender[type](key, firstValue, secondValue, children));
+    return _.flatten(result).join('\n');
   };
 
   const str = render(ast, 2);
