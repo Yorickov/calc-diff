@@ -8,7 +8,6 @@ export default (ast) => {
     const typeRender = {
       parent: (key, firstValue, secondValue, children) =>
         render(children, `${pathStr}${key}.`),
-      unchanged: () => '',
       changed: (key, firstValue, secondValue) =>
         `Property '${pathStr}${key}' was updated. From ${getValue(firstValue)} to ${getValue(secondValue)}`,
       added: (key, firstValue, secondValue) =>
@@ -17,14 +16,16 @@ export default (ast) => {
         `Property '${pathStr}${key}' was removed`,
     };
 
-    const arrResult = tree.map(({
-      type,
-      key,
-      firstValue,
-      secondValue,
-      children,
-    }) => typeRender[type](key, firstValue, secondValue, children));
-    return arrResult.filter(item => item !== '').join('\n');
+    return tree
+      .filter(({ type }) => type !== 'unchanged')
+      .map(({
+        type,
+        key,
+        firstValue,
+        secondValue,
+        children,
+      }) => typeRender[type](key, firstValue, secondValue, children))
+      .join('\n');
   };
 
   const strResult = render(ast, '');

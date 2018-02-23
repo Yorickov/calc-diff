@@ -1,9 +1,11 @@
-import renderNest from './render-nest';
-import renderPlain from './render-plain';
+import nestRenderer from './nest-renderer';
+import plainRenderer from './plain-renderer';
+import jsonRenderer from './json-renderer';
 
 const renderers = {
-  nest: renderNest,
-  plain: renderPlain,
+  nest: nestRenderer,
+  plain: plainRenderer,
+  json: jsonRenderer,
 };
 
 export default typeRender => renderers[typeRender];

@@ -23,6 +23,7 @@ const inilNestPathSecond = '__tests__/__fixtures__/after-nest.yml';
 
 const diffNestPath = '__tests__/__fixtures__/diff-nest.txt';
 const diffPlainPath = '__tests__/__fixtures__/diff-plain.txt';
+const diffJsonPath = '__tests__/__fixtures__/diff-json.json';
 
 describe('flat structure - nested-render', () => {
   it('json', () => {
@@ -44,7 +45,7 @@ describe('flat structure - nested-render', () => {
   });
 });
 
-describe('tree structure - nested-render', () => {
+describe('nested structure - nested-render', () => {
   it('json', () => {
     const received = genDiff(jsonNestPathFirst, jsonNestPathSecond, 'nest');
     const expected = fs.readFileSync(diffNestPath, 'utf8');
@@ -64,7 +65,7 @@ describe('tree structure - nested-render', () => {
   });
 });
 
-describe('tree structure - plain-render', () => {
+describe('nested structure - plain-render', () => {
   it('json', () => {
     const received = genDiff(jsonNestPathFirst, jsonNestPathSecond, 'plain');
     const expected = fs.readFileSync(diffPlainPath, 'utf8');
@@ -80,6 +81,26 @@ describe('tree structure - plain-render', () => {
   it('ini', () => {
     const received = genDiff(inilNestPathFirst, inilNestPathSecond, 'plain');
     const expected = fs.readFileSync(diffPlainPath, 'utf8');
+    expect(received).toMatch(expected);
+  });
+});
+
+describe('nested structure - json-render', () => {
+  it('json', () => {
+    const received = genDiff(jsonNestPathFirst, jsonNestPathSecond, 'json');
+    const expected = fs.readFileSync(diffJsonPath, 'utf8');
+    expect(received).toMatch(expected);
+  });
+
+  it('yaml', () => {
+    const received = genDiff(yamlNestPathFirst, yamlNestPathSecond, 'json');
+    const expected = fs.readFileSync(diffJsonPath, 'utf8');
+    expect(received).toMatch(expected);
+  });
+
+  it('ini', () => {
+    const received = genDiff(inilNestPathFirst, inilNestPathSecond, 'json');
+    const expected = fs.readFileSync(diffJsonPath, 'utf8');
     expect(received).toMatch(expected);
   });
 });

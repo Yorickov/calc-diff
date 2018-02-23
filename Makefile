@@ -11,8 +11,8 @@ plain:
 nest:
 	npm run babel-node -- src/bin/gendiff.js --format nest __tests__/__fixtures__/before-nest.json __tests__/__fixtures__/after-nest.json
 
-index:
-	npm run babel-node -- src/index.js
+json:
+	npm run babel-node -- src/bin/gendiff.js --format json __tests__/__fixtures__/before-nest.json __tests__/__fixtures__/after-nest.json
 
 test:
 	npm test

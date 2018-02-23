@@ -47,7 +47,6 @@ const parseToObj = (str, typeFile) => getParser(typeFile)(str);
 
 const parseToAst = (firstOb, secondOb) => {
   const keys = _.union(Object.keys(firstOb), Object.keys(secondOb));
-
   return keys.map((key) => {
     const { type, process } = typeParse.find(({ check }) =>
       check(firstOb, secondOb, key));
