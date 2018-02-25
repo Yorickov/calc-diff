@@ -1,6 +1,6 @@
 {
   "name": "calc-diff",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Compares two configuration files and shows a difference",
   "main": "dist/index.js",
   "bin": {
@@ -29,15 +29,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Yorickov/project-lvl2-s193.git"
+    "url": "git+https://github.com/Yorickov/calc-diff.git"
   },
   "bugs": {
-    "url": "https://github.com/Yorickov/project-lvl2-s193/issues"
+    "url": "https://github.com/Yorickov/calc-diff/issues"
   },
   "keywords": [],
   "author": "Yorickov",
   "license": "ISC",
-  "homepage": "https://github.com/Yorickov/project-lvl2-s193#readme",
+  "homepage": "https://github.com/Yorickov/calc-diff#readme",
   "devDependencies": {
     "babel-cli": "*",
     "babel-core": "*",
