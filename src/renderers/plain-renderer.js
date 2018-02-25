@@ -1,22 +1,22 @@
-import isTrueObject from '../utils';
+import { isTrueObject } from '../utils';
+
+const getTypeValue = value => (typeof value === 'string' ? `'${value}'` : `${value}`);
+const getValue = value => (isTrueObject(value) ? 'complex value' : getTypeValue(value));
+
+const typeRender = {
+  parent: (key, firstValue, secondValue, children, fn) =>
+    fn(children, `${key}`),
+  changed: (key, firstValue, secondValue) =>
+    `Property '${key}' was updated. From ${getValue(firstValue)} to ${getValue(secondValue)}`,
+  added: (key, firstValue, secondValue) =>
+    `Property '${key}' was added with value: ${getValue(secondValue)}`,
+  deleted: key =>
+    `Property '${key}' was removed`,
+};
 
 export default (ast) => {
-  const getTypeValue = value => (typeof value === 'string' ? `'${value}'` : `${value}`);
-  const getValue = value => (isTrueObject(value) ? 'complex value' : getTypeValue(value));
-
-  const render = (tree, pathStr) => {
-    const typeRender = {
-      parent: (key, firstValue, secondValue, children) =>
-        render(children, `${pathStr}${key}.`),
-      changed: (key, firstValue, secondValue) =>
-        `Property '${pathStr}${key}' was updated. From ${getValue(firstValue)} to ${getValue(secondValue)}`,
-      added: (key, firstValue, secondValue) =>
-        `Property '${pathStr}${key}' was added with value: ${getValue(secondValue)}`,
-      deleted: key =>
-        `Property '${pathStr}${key}' was removed`,
-    };
-
-    return tree
+  const render = (tree, pathStr) =>
+    tree
       .filter(({ type }) => type !== 'unchanged')
       .map(({
         type,
@@ -24,9 +24,11 @@ export default (ast) => {
         firstValue,
         secondValue,
         children,
-      }) => typeRender[type](key, firstValue, secondValue, children))
+      }) => {
+        const newKey = pathStr ? `${pathStr}.${key}` : key;
+        return typeRender[type](newKey, firstValue, secondValue, children, render);
+      })
       .join('\n');
-  };
 
   const strResult = render(ast, '');
   return `\n${strResult}\n`;
