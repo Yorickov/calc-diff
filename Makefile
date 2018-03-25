@@ -17,8 +17,11 @@ json:
 test:
 	npm test
 
-watch:
-	npm run watch
+test-watch:
+	npm test -- --watchAll
+
+test-coverage:
+	npm test -- --coverage
 
 lint:
 	npm run eslint .
