@@ -20,7 +20,6 @@ CLI-utility, compares two configuration files (ini, json, yaml) and shows a diff
 - test-driven development: unit testing
 
 ## Setup
-
 `make install`
 
 *`npm install -g calc-diff`*
