@@ -5,20 +5,24 @@ import buildAst from './build-ast';
 import getParser from './parsers';
 import getRenderer from './renderers';
 
-const getTypeFile = pathToFile => path.extname(pathToFile);
+const getFileType = pathToFile => path.extname(pathToFile);
 
-const parseToObj = (str, typeFile) => getParser(typeFile)(str);
+const parseToObj = (str, fileType) => {
+  const parser = getParser(fileType);
+  return parser(str);
+};
 
-export default (pathToFile1, pathToFile2, typeRender) => {
-  const firstStr = fs.readFileSync(pathToFile1, 'utf8');
-  const secondStr = fs.readFileSync(pathToFile2, 'utf8');
+export default (pathToFirstFile, pathToSevondFile, typeRender) => {
+  const firstFileContent = fs.readFileSync(pathToFirstFile, 'utf8');
+  const secondFileContent = fs.readFileSync(pathToSevondFile, 'utf8');
 
-  const firstType = getTypeFile(pathToFile1);
-  const secondType = getTypeFile(pathToFile2);
+  const firstFileType = getFileType(pathToFirstFile);
+  const secondFileType = getFileType(pathToSevondFile);
 
-  const firstOb = parseToObj(firstStr, firstType);
-  const secondOb = parseToObj(secondStr, secondType);
+  const firstOb = parseToObj(firstFileContent, firstFileType);
+  const secondOb = parseToObj(secondFileContent, secondFileType);
 
   const ast = buildAst(firstOb, secondOb);
-  return getRenderer(typeRender)(ast);
+  const render = getRenderer(typeRender);
+  return render(ast);
 };

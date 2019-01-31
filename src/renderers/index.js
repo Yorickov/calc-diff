@@ -8,4 +8,4 @@ const renderers = {
   json: jsonRenderer,
 };
 
-export default typeRender => renderers[typeRender];
+export default renderType => renderers[renderType];

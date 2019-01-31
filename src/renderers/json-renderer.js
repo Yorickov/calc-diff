@@ -1,4 +1,4 @@
-const typeRender = {
+const renderTypes = {
   parent: (type, key, firstValue, secondValue, children, fn) =>
     ({ [key]: fn(children) }),
   unchanged: (type, key, firstValue) =>
@@ -12,16 +12,16 @@ const typeRender = {
 };
 
 export default (ast, spaceFormat = 0) => {
-  const render = tree =>
+  const renderToArr = tree =>
     tree.map(({
       type,
       key,
       firstValue,
       secondValue,
       children,
-    }) => typeRender[type](type, key, firstValue, secondValue, children, render));
+    }) => renderTypes[type](type, key, firstValue, secondValue, children, renderToArr));
 
-  const arrResult = render(ast);
-  const jsonResult = JSON.stringify(arrResult, '', spaceFormat);
-  return jsonResult;
+  const renderedArr = renderToArr(ast);
+  const renderedStr = JSON.stringify(renderedArr, '', spaceFormat);
+  return renderedStr;
 };

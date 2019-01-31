@@ -1,15 +1,14 @@
-import _ from 'lodash';
-import { isTrueObject } from '../utils';
+import { isTrueObject, flatten } from '../utils';
 
-const getStr = (obj, spaceCount) =>
+const getStrFromObj = (obj, spaceCount) =>
   Object.keys(obj).map(key =>
-    (isTrueObject(obj[key]) ? getStr(obj[key]) : `${key}: ${obj[key]}`))
+    (isTrueObject(obj[key]) ? getStrFromObj(obj[key]) : `${key}: ${obj[key]}`))
     .join(`\n${' '.repeat(spaceCount + 8)}`);
 
 const getValue = (value, spaceCount) =>
-  (!isTrueObject(value) ? `${value}` : `{\n${' '.repeat(spaceCount + 6)}${getStr(value, spaceCount)}\n${' '.repeat(spaceCount + 2)}}`);
+  (!isTrueObject(value) ? `${value}` : `{\n${' '.repeat(spaceCount + 6)}${getStrFromObj(value, spaceCount)}\n${' '.repeat(spaceCount + 2)}}`);
 
-const typeRender = {
+const renderTypes = {
   parent: (key, spaceCount, firstValue, secondValue, children, fn) =>
     `${' '.repeat(spaceCount)}  ${key}: {\n${fn(children, spaceCount + 4)}\n${' '.repeat(spaceCount + 2)}}`,
   unchanged: (key, spaceCount, firstValue) =>
@@ -23,17 +22,17 @@ const typeRender = {
 };
 
 export default (ast) => {
-  const render = (tree, spaceCount) => {
+  const renderToStr = (tree, spaceCount) => {
     const result = tree.map(({
       type,
       key,
       firstValue,
       secondValue,
       children,
-    }) => typeRender[type](key, spaceCount, firstValue, secondValue, children, render));
-    return _.flatten(result).join('\n');
+    }) => renderTypes[type](key, spaceCount, firstValue, secondValue, children, renderToStr));
+    return flatten(result).join('\n');
   };
 
-  const strResult = render(ast, 2);
-  return `{\n${strResult}\n}`;
+  const renderedStr = renderToStr(ast, 2);
+  return `{\n${renderedStr}\n}`;
 };

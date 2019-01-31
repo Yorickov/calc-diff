@@ -1,7 +1,6 @@
-import _ from 'lodash';
-import { isTrueObject, hasKeyObjects, hasKeyFirstObject } from './utils';
+import { isTrueObject, hasKeyInObjects, hasKeyInFirstObject, mergeObjectKeys } from './utils';
 
-const typeParse = [
+const keyTypes = [
   {
     type: 'parent',
     check: (firstOb, secondOb, key) =>
@@ -11,33 +10,33 @@ const typeParse = [
   {
     type: 'unchanged',
     check: (firstOb, secondOb, key) =>
-      hasKeyObjects(firstOb, secondOb, key) && (firstOb[key] === secondOb[key]),
+      hasKeyInObjects(firstOb, secondOb, key) && (firstOb[key] === secondOb[key]),
     process: firstValue => ({ firstValue }),
   },
   {
     type: 'changed',
     check: (firstOb, secondOb, key) =>
-      (hasKeyObjects(firstOb, secondOb, key) && (firstOb[key] !== secondOb[key])),
+      (hasKeyInObjects(firstOb, secondOb, key) && (firstOb[key] !== secondOb[key])),
     process: (firstValue, secondValue) => ({ firstValue, secondValue }),
   },
   {
     type: 'added',
     check: (firstOb, secondOb, key) =>
-      hasKeyFirstObject(secondOb, firstOb, key),
+      hasKeyInFirstObject(secondOb, firstOb, key),
     process: (firstValue, secondValue) => ({ secondValue }),
   },
   {
     type: 'deleted',
     check: (firstOb, secondOb, key) =>
-      hasKeyFirstObject(firstOb, secondOb, key),
+      hasKeyInFirstObject(firstOb, secondOb, key),
     process: firstValue => ({ firstValue }),
   },
 ];
 
 const buildAst = (firstOb, secondOb) => {
-  const keys = _.union(Object.keys(firstOb), Object.keys(secondOb));
+  const keys = mergeObjectKeys(firstOb, secondOb);
   return keys.map((key) => {
-    const { type, process } = typeParse.find(({ check }) =>
+    const { type, process } = keyTypes.find(({ check }) =>
       check(firstOb, secondOb, key));
 
     const value = process(firstOb[key], secondOb[key], buildAst);
